@@ -27,7 +27,7 @@ ifeq ($(BUILD_TYPE), release)
 endif
 
 LDFLAGS = 
-LDFLAGS2 = $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -lX11 -lXext -lrt -lstdc++
+LDFLAGS2 = $(LDFLAGS2_OPENCV) $(LDFLAGS_PI) -lX11 -lXext -lrt -lstdc++ -lpthread -lm
 
 RASPICAMCV_OBJS = \
 	$(OBJS)/RaspiCamControl.o \
