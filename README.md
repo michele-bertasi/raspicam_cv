@@ -1,5 +1,13 @@
-RaspiCamCV
-===========
+# RaspiCamCV
+
+This project will allow you to use the camera of the Raspberry Pi with the OpenCV library. RaspiCamCV.c/h is the library source. It's converted from camcv_vid0.c from Pierre Raufast  (view Credit for more informations).
+
+I modify it to fit my needs:
+* Modify compilation flags so it compiles on Archarm
+* Add another test program to test the camera without X
+* Modify the way the camera's properties are handled
+
+## Credit
 Clone from https://github.com/erget/robidouille which was forked from:
 https://github.com/robidouille/robidouille.
 
@@ -7,10 +15,9 @@ More info about the original RaspiCamCV:
 * Website: http://www.robidouille.com
 * Google+: https://www.google.com/+Robidouille
 
-I modify it to fit my needs:
-* Modify compilation flags so it compiles on Archarm
-* Add another test program to test the camera without X
-* Modify the way the camera's properties are handled
+More info about Pierre Raufast's camcv_vid0.c:
+* https://thinkrpi.wordpress.com/2013/05/22/opencv-and-camera-board-csi/
+* https://thinkrpi.wordpress.com/
 
 # To compile
 
@@ -73,8 +80,3 @@ Set the proper width automatically. Does nothing if height is not supported.
 * void raspiCamCvSetCapturePropertyWidth(RaspiCamCvCapture * capture, int width)
 Set the proper height automatically. Does nothing if width is not supported.
 
-# Credits
-RaspiCamCV.c/h is the library source.
-It's converted from camcv_vid0.c from Pierre Raufast.
-https://thinkrpi.wordpress.com/2013/05/22/opencv-and-camera-board-csi/
-https://thinkrpi.wordpress.com/
