@@ -48,7 +48,7 @@ This will create:
 * raspicamtest: a small test app which uses the library
 
 
-## To use it in your own project:
+# To use it in your own project:
 
 Fellow the steps below:
 
@@ -62,9 +62,16 @@ cvCreateCameraCapture and delivers pictures in 640x480 resolution)
 * cvQueryFrame -> raspiCamCvQueryFrame
 * CvCapture -> RaspiCamCvCapture
 
-If you want to set the capture's resolution manually, use
-raspiCamCvSetCaptureProperty. Otherwise the querying the frame will return an
-image in the camera's native resolution (2592x1944 px).
+## Manually set the resolution
+
+By default, the querying the frame will return an image in the camera's
+native resolution (2592x1944 px). If you want to set the capture's
+resolution manually, you have 3 possibilities:
+* raspiCamCvSetCaptureProperty, which can also set the frame rate.
+* raspiCamCvSetCapturePropertyHeight(RaspiCamCvCapture * capture, int height)
+Set the proper width automatically. Does nothing if height is not supported.
+* void raspiCamCvSetCapturePropertyWidth(RaspiCamCvCapture * capture, int width)
+Set the proper height automatically. Does nothing if width is not supported.
 
 # Credits
 RaspiCamCV.c/h is the library source.

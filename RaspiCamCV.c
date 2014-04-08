@@ -2,7 +2,7 @@
 //
 // Many source code lines are copied from RaspiVid.c
 // Copyright (c) 2012, Broadcom Europe Ltd
-// 
+//
 // Lines have been added by Pierre Raufast - mai 2013
 // pierre.raufast@gmail.com
 // to work with OpenCV 2.3
@@ -11,7 +11,7 @@
 // This file display camera in a OpenCv window
 //
 // For a better world, read Giono's Books
-// 
+//
 /////////////////////////////////////////////////////////////
 //
 // Emil Valkov - robidouille@valkov.com
@@ -100,7 +100,7 @@ typedef struct _RASPIVID_STATE
 
 	VCOS_SEMAPHORE_T capture_sem;
 	VCOS_SEMAPHORE_T capture_done_sem;
-   
+
 } RASPIVID_STATE;
 
 // default status
@@ -123,7 +123,7 @@ static void default_status(RASPIVID_STATE *state)
    state->framerate 		= VIDEO_FRAME_RATE_NUM;
    state->immutableInput 	= 1;
    state->graymode 			= 0;		// Gray (1) much faster than color (0)
-   
+
    // Set up the camera_parameters to default
    raspicamcontrol_set_defaults(&state->camera_parameters);
 }
@@ -137,7 +137,7 @@ static void default_status(RASPIVID_STATE *state)
 static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffer)
 {
 	MMAL_BUFFER_HEADER_T *new_buffer;
-	RASPIVID_STATE * state = (RASPIVID_STATE *)port->userdata;		
+	RASPIVID_STATE * state = (RASPIVID_STATE *)port->userdata;
 
 	if (state)
 	{
@@ -148,7 +148,7 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 		if (buffer->length)
 		{
 			mmal_buffer_header_mem_lock(buffer);
- 
+
 			//
 			// *** PR : OPEN CV Stuff here !
 			//
@@ -157,7 +157,7 @@ static void video_buffer_callback(MMAL_PORT_T *port, MMAL_BUFFER_HEADER_T *buffe
 			int h4=h/4;
 
 			memcpy(state->py->imageData,buffer->data,w*h);	// read Y
-		
+
 			if (state->graymode==0)
 			{
 				memcpy(state->pu->imageData,buffer->data+w*h,w*h4); // read U
@@ -212,25 +212,25 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
 	MMAL_ES_FORMAT_T *format;
 	MMAL_PORT_T *preview_port = NULL, *video_port = NULL, *still_port = NULL;
 	MMAL_STATUS_T status;
-	
+
 	/* Create the component */
 	status = mmal_component_create(MMAL_COMPONENT_DEFAULT_CAMERA, &camera);
-	
+
 	if (status != MMAL_SUCCESS)
 	{
 	   vcos_log_error("Failed to create camera component");
 	   goto error;
 	}
-	
+
 	if (!camera->output_num)
 	{
 	   vcos_log_error("Camera doesn't have output ports");
 	   goto error;
 	}
-	
+
 	video_port = camera->output[MMAL_CAMERA_VIDEO_PORT];
 	still_port = camera->output[MMAL_CAMERA_CAPTURE_PORT];
-	
+
 	//  set up the camera configuration
 	{
 	   MMAL_PARAMETER_CAMERA_CONFIG_T cam_config =
@@ -250,7 +250,7 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
 	   mmal_port_parameter_set(camera->control, &cam_config.hdr);
 	}
 	// Set the encode format on the video  port
-	
+
 	format = video_port->format;
 	format->encoding_variant = MMAL_ENCODING_I420;
 	format->encoding = MMAL_ENCODING_I420;
@@ -262,15 +262,15 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
 	format->es->video.crop.height = state->height;
 	format->es->video.frame_rate.num = state->framerate;
 	format->es->video.frame_rate.den = VIDEO_FRAME_RATE_DEN;
-	
+
 	status = mmal_port_format_commit(video_port);
 	if (status)
 	{
 	   vcos_log_error("camera video format couldn't be set");
 	   goto error;
 	}
-	
-	// PR : plug the callback to the video port 
+
+	// PR : plug the callback to the video port
 	status = mmal_port_enable(video_port, video_buffer_callback);
 	if (status)
 	{
@@ -303,7 +303,7 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
       goto error;
    }
 
-	
+
 	//PR : create pool of message on video port
 	MMAL_POOL_T *pool;
 	video_port->buffer_size = video_port->buffer_size_recommended;
@@ -318,20 +318,20 @@ static MMAL_COMPONENT_T *create_camera_component(RASPIVID_STATE *state)
 	/* Ensure there are enough buffers to avoid dropping frames */
 	if (still_port->buffer_num < VIDEO_OUTPUT_BUFFERS_NUM)
 	   still_port->buffer_num = VIDEO_OUTPUT_BUFFERS_NUM;
-	
+
 	/* Enable component */
 	status = mmal_component_enable(camera);
-	
+
 	if (status)
 	{
 	   vcos_log_error("camera component couldn't be enabled");
 	   goto error;
 	}
-	
+
 	raspicamcontrol_set_all_parameters(camera, &state->camera_parameters);
-	
+
 	state->camera_component = camera;
-	
+
 	return camera;
 
 error:
@@ -421,9 +421,78 @@ void raspiCamCvSetCaptureProperty(RaspiCamCvCapture * capture, int property_id, 
 	if (property_id == RPI_CAP_PROP_FRAME_HEIGHT)
         capture->pState->height = value;
 	else if (property_id == RPI_CAP_PROP_FRAME_WIDTH)
-		capture->pState->height = value;
+		capture->pState->width = value;
 	else if (property_id == RPI_CAP_PROP_FPS)
 		capture->pState->framerate = value;
+}
+
+void raspiCamCvSetCapturePropertyWidth(RaspiCamCvCapture * capture, int width)
+{
+    int height = 0;
+    switch (width)
+    {
+        case 2592:
+        height = 1944;
+        break;
+
+        case 1920:
+        height = 1080;
+        break;
+
+        case 1296:
+        height = 972; // 730 is also supported. Use raspiCamCvSetCapturePropertyHeight.
+        break;
+
+        case 640:
+        height = 480;
+        break;
+
+        default:
+        break;
+    }
+
+    if ( height )
+    {
+        capture->pState->width = width;
+        catpture->pState->height = height;
+    }
+}
+
+void raspiCamCvSetCapturePropertyHeight(RaspiCamCvCapture * capture, int height)
+{
+    int width = 0;
+
+    switch (height)
+    {
+        case 1944:
+            width = 2592;
+            break;
+
+        case 1080:
+            width = 1920;
+            break;
+
+        case 972:
+            width = 1296;
+            break;
+
+        case 730:
+            width = 1296;
+            break;
+
+        case 480:
+            width = 640;
+            break;
+
+        default:
+            break;
+    }
+
+        if ( width )
+    {
+        capture->pState->width = width;
+        catpture->pState->height = height;
+    }
 }
 
 RaspiCamCvCapture * raspiCamCvCreateCameraCapture(int index)
@@ -432,7 +501,7 @@ RaspiCamCvCapture * raspiCamCvCreateCameraCapture(int index)
 	// Our main data storage vessel..
 	RASPIVID_STATE * state = (RASPIVID_STATE*)malloc(sizeof(RASPIVID_STATE));
 	capture->pState = state;
-	
+
 	MMAL_STATUS_T status = -1;
 	MMAL_PORT_T *camera_video_port = NULL;
 	MMAL_PORT_T *camera_still_port = NULL;
@@ -482,22 +551,22 @@ RaspiCamCvCapture * raspiCamCvCreateCameraCapture(int index)
 	}
 
 	// Send all the buffers to the video port
-		
+
 	int num = mmal_queue_length(state->video_pool->queue);
 	int q;
 	for (q = 0; q < num; q++)
 	{
 		MMAL_BUFFER_HEADER_T *buffer = mmal_queue_get(state->video_pool->queue);
-		
+
 		if (!buffer)
 			vcos_log_error("Unable to get a required buffer %d from pool queue", q);
-		
+
 		if (mmal_port_send_buffer(camera_video_port, buffer)!= MMAL_SUCCESS)
 			vcos_log_error("Unable to send a buffer to encoder output port (%d)", q);
 	}
 
-	//mmal_status_to_int(status);	
-		
+	//mmal_status_to_int(status);
+
 	// Disable all our ports that are not handled by connections
 	//check_disable_port(camera_still_port);
 
@@ -554,7 +623,7 @@ IplImage * raspiCamCvQueryFrame(RaspiCamCvCapture * capture)
 		cvResize(state->pu, state->pu_big, CV_INTER_NN);
 		cvResize(state->pv, state->pv_big, CV_INTER_NN);  //CV_INTER_LINEAR looks better but it's slower
 		cvMerge(state->py, state->pu_big, state->pv_big, NULL, state->yuvImage);
-	
+
 		cvCvtColor(state->yuvImage,state->dstImage,CV_YCrCb2RGB);	// convert in RGB color space (slow)
 		return state->dstImage;
 	}
