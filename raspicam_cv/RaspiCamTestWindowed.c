@@ -1,10 +1,13 @@
 /*
-
- Copyright (c) by Emil Valkov,
- All rights reserved.
-
- License: http://www.opensource.org/licenses/bsd-license.php
-
+ *
+ * Copyright (c) by Emil Valkov,
+ * All rights reserved.
+ *
+ * License: http://www.opensource.org/licenses/bsd-license.php
+ *
+ * This program displays what the RaspiCam sees in an cvNamedWindow. It
+ * requires X to run properly.
+ *
 */
 
 #include <cv.h>
