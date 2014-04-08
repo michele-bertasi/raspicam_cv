@@ -3,7 +3,7 @@ OBJS = objs
 CFLAGS_OPENCV = -I/usr/include/opencv
 LDFLAGS2_OPENCV = -lopencv_highgui -lopencv_core -lopencv_legacy -lopencv_video -lopencv_features2d -lopencv_calib3d -lopencv_imgproc
 
-USERLAND_ROOT = $(HOME)/dev/userland
+USERLAND_ROOT = $(HOME)/git/raspberrypi/userland
 CFLAGS_PI = \
 	-I$(USERLAND_ROOT)/host_applications/linux/libs/bcm_host/include \
 	-I$(USERLAND_ROOT)/host_applications/linux/apps/raspicam \
@@ -37,7 +37,7 @@ RASPICAMCV_OBJS = \
 RASPICAMTEST_OBJS = \
 	$(OBJS)/RaspiCamTest.o \
 
-TARGETS = libraspicamcv.a raspicamtest
+TARGETS = libraspicamcv.a raspicamtest_window raspicamtest_save
 
 all: $(TARGETS)
 
@@ -50,7 +50,10 @@ $(OBJS)/%.o: $(USERLAND_ROOT)/host_applications/linux/apps/raspicam/%.c
 libraspicamcv.a: $(RASPICAMCV_OBJS)
 	ar rcs libraspicamcv.a -o $+
 
-raspicamtest: $(RASPICAMTEST_OBJS) libraspicamcv.a
+raspicamtest_window: $(RASPICAMTEST_OBJS) libraspicamcv.a
+	gcc $(LDFLAGS) $+ $(LDFLAGS2) -L. -lraspicamcv -o $@
+	
+raspicamtest_save: $(RASPICAMTEST_OBJS) libraspicamcv.a
 	gcc $(LDFLAGS) $+ $(LDFLAGS2) -L. -lraspicamcv -o $@
 
 clean:
