@@ -454,7 +454,7 @@ void raspiCamCvSetCapturePropertyWidth(RaspiCamCvCapture * capture, int width)
     if ( height )
     {
         capture->pState->width = width;
-        catpture->pState->height = height;
+        capture->pState->height = height;
     }
 }
 
@@ -491,7 +491,7 @@ void raspiCamCvSetCapturePropertyHeight(RaspiCamCvCapture * capture, int height)
         if ( width )
     {
         capture->pState->width = width;
-        catpture->pState->height = height;
+        capture->pState->height = height;
     }
 }
 
