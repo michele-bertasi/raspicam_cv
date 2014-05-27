@@ -34,23 +34,22 @@
 #include <string.h>
 #include <memory.h>
 
-//new
-#include <cv.h>
-#include <highgui.h>
-#include "time.h"
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+#include <time.h>
 
-#include "bcm_host.h"
-#include "interface/vcos/vcos.h"
+#include <bcm_host.h>
+#include <interface/vcos/vcos.h>
 
-#include "interface/mmal/mmal.h"
-#include "interface/mmal/mmal_logging.h"
-#include "interface/mmal/mmal_buffer.h"
-#include "interface/mmal/util/mmal_util.h"
-#include "interface/mmal/util/mmal_util_params.h"
-#include "interface/mmal/util/mmal_default_components.h"
-#include "interface/mmal/util/mmal_connection.h"
+#include <interface/mmal/mmal.h>
+#include <interface/mmal/mmal_logging.h>
+#include <interface/mmal/mmal_buffer.h>
+#include <interface/mmal/util/mmal_util.h>
+#include <interface/mmal/util/mmal_util_params.h>
+#include <interface/mmal/util/mmal_default_components.h>
+#include <interface/mmal/util/mmal_connection.h>
 
-#include "RaspiCamControl.h"
+#include <RaspiCamControl.h>
 
 #include <semaphore.h>
 
