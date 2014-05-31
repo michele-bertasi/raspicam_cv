@@ -121,7 +121,7 @@ static void default_status(RASPIVID_STATE *state)
    state->bitrate 			= 17000000; // This is a decent default bitrate for 1080p
    state->framerate 		= VIDEO_FRAME_RATE_NUM;
    state->immutableInput 	= 1;
-   state->graymode 			= 0;		// Gray (1) much faster than color (0)
+   state->graymode 			= 1;		// Gray (1) much faster than color (0)
 
    // Set up the camera_parameters to default
    raspicamcontrol_set_defaults(&state->camera_parameters);
