@@ -125,6 +125,7 @@ static void default_status(RASPIVID_STATE *state)
 
    // Set up the camera_parameters to default
    raspicamcontrol_set_defaults(&state->camera_parameters);
+   state->camera_parameters.rotation = 180;
 }
 
 /**
